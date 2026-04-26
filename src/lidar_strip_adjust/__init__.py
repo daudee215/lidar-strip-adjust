@@ -29,8 +29,8 @@ References
 """
 
 from lidar_strip_adjust.adjustment import StripAdjuster
-from lidar_strip_adjust.io import load_strip, save_strip
 from lidar_strip_adjust.features import extract_planar_features
+from lidar_strip_adjust.io import load_strip, save_strip
 from lidar_strip_adjust.metrics import compute_strip_rmse
 
 __all__ = [

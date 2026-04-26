@@ -4,7 +4,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/lidar-strip-adjust)](https://pypi.org/project/lidar-strip-adjust/)
 [![CI](https://github.com/daudee215/lidar-strip-adjust/actions/workflows/ci.yml/badge.svg)](https://github.com/daudee215/lidar-strip-adjust/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/daudee215/lidar-strip-adjust/blob/main/LICENSE)
 
 ---
 

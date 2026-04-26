@@ -48,7 +48,7 @@ def compute_strip_rmse(
     if len(valid) == 0:
         return {"rmse": np.inf, "mae": np.inf, "n_pairs": 0, "coverage_fraction": 0.0}
     return {
-        "rmse": float(np.sqrt(np.mean(valid ** 2))),
+        "rmse": float(np.sqrt(np.mean(valid**2))),
         "mae": float(np.mean(np.abs(valid))),
         "n_pairs": int(mask.sum()),
         "coverage_fraction": float(mask.mean()),

@@ -24,7 +24,6 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from typing import Optional
 
 import numpy as np
 from numpy.typing import NDArray
@@ -38,14 +37,15 @@ logger = logging.getLogger(__name__)
 
 # ── Rotation helpers ────────────────────────────────────────────────────────
 
+
 def _zyx_rotation(omega: float, phi: float, kappa: float) -> NDArray[np.float64]:
     """ZYX (yaw-pitch-roll) rotation matrix from boresight angles (radians)."""
     co, so = np.cos(omega), np.sin(omega)
-    cp, sp = np.cos(phi),   np.sin(phi)
+    cp, sp = np.cos(phi), np.sin(phi)
     ck, sk = np.cos(kappa), np.sin(kappa)
-    Rz = np.array([[ck, -sk, 0], [sk,  ck, 0], [0, 0, 1]], dtype=np.float64)
-    Ry = np.array([[cp,  0, sp], [0,   1, 0], [-sp, 0, cp]], dtype=np.float64)
-    Rx = np.array([[1,   0,  0], [0,  co, -so], [0, so, co]], dtype=np.float64)
+    Rz = np.array([[ck, -sk, 0], [sk, ck, 0], [0, 0, 1]], dtype=np.float64)
+    Ry = np.array([[cp, 0, sp], [0, 1, 0], [-sp, 0, cp]], dtype=np.float64)
+    Rx = np.array([[1, 0, 0], [0, co, -so], [0, so, co]], dtype=np.float64)
     return Rz @ Ry @ Rx
 
 
@@ -75,6 +75,7 @@ def apply_correction(
 
 # ── Correspondence matching ─────────────────────────────────────────────────
 
+
 def _match_patches(
     ref_patches: list[PlanarPatch],
     tgt_patches: list[PlanarPatch],
@@ -93,7 +94,7 @@ def _match_patches(
 
     cos_thresh = np.cos(np.radians(max_angle_deg))
     pairs: list[tuple[PlanarPatch, PlanarPatch]] = []
-    for j, (dist, i) in enumerate(zip(dists, idxs)):
+    for j, (dist, i) in enumerate(zip(dists, idxs, strict=False)):
         if dist > max_dist:
             continue
         rp, tp = ref_patches[i], tgt_patches[j]
@@ -105,6 +106,7 @@ def _match_patches(
 
 
 # ── Residual function ───────────────────────────────────────────────────────
+
 
 def _residuals(
     params: NDArray[np.float64],
@@ -126,19 +128,20 @@ def _residuals(
 
 # ── Main adjuster ───────────────────────────────────────────────────────────
 
+
 @dataclass
 class AdjustmentResult:
     """Result of a strip-pair adjustment."""
 
     strip_id: str
-    params: NDArray[np.float64]          # (6,) [Δω,Δφ,Δκ,Δx,Δy,Δz]
-    rmse_before: float                   # RMS point-to-plane before adjustment
-    rmse_after: float                    # RMS point-to-plane after adjustment
-    n_correspondences: int               # number of matched patch pairs
+    params: NDArray[np.float64]  # (6,) [Δω,Δφ,Δκ,Δx,Δy,Δz]
+    rmse_before: float  # RMS point-to-plane before adjustment
+    rmse_after: float  # RMS point-to-plane after adjustment
+    n_correspondences: int  # number of matched patch pairs
     converged: bool
     n_iterations: int
     cost: float
-    corrected_points: Optional[NDArray[np.float64]] = field(default=None, repr=False)
+    corrected_points: NDArray[np.float64] = field(default_factory=lambda: np.empty((0, 3)), repr=False)
 
 
 class StripAdjuster:
@@ -181,7 +184,7 @@ class StripAdjuster:
         reference: NDArray[np.float64],
         target: NDArray[np.float64],
         strip_id: str = "target",
-        x0: Optional[NDArray[np.float64]] = None,
+        x0: NDArray[np.float64] | None = None,
     ) -> AdjustmentResult:
         """Estimate and apply the 6-DOF boresight correction.
 
@@ -222,8 +225,10 @@ class StripAdjuster:
         logger.info("Extracted %d target patches", len(tgt_patches))
 
         if not ref_patches or not tgt_patches:
-            raise ValueError("Insufficient planar features extracted. "
-                             "Try lowering planarity_threshold or k_neighbours.")
+            raise ValueError(
+                "Insufficient planar features extracted. "
+                "Try lowering planarity_threshold or k_neighbours."
+            )
 
         pairs = _match_patches(
             ref_patches,
@@ -239,7 +244,7 @@ class StripAdjuster:
 
         # RMS before adjustment
         res_before = _residuals(x0, pairs, target)
-        rmse_before = float(np.sqrt(np.mean(res_before ** 2)))
+        rmse_before = float(np.sqrt(np.mean(res_before**2)))
 
         result = least_squares(
             _residuals,
@@ -255,15 +260,18 @@ class StripAdjuster:
         converged = result.success or result.cost < 1e-6
 
         res_after = _residuals(params, pairs, target)
-        rmse_after = float(np.sqrt(np.mean(res_after ** 2)))
+        rmse_after = float(np.sqrt(np.mean(res_after**2)))
 
         corrected = apply_correction(target, params)
 
         logger.info(
             "Strip %s: RMSE %.4f → %.4f m (Δω=%.4f° Δφ=%.4f° Δκ=%.4f°)",
             strip_id,
-            rmse_before, rmse_after,
-            np.degrees(params[0]), np.degrees(params[1]), np.degrees(params[2]),
+            rmse_before,
+            rmse_after,
+            np.degrees(params[0]),
+            np.degrees(params[1]),
+            np.degrees(params[2]),
         )
 
         return AdjustmentResult(

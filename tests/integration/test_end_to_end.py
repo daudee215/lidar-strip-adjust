@@ -1,6 +1,5 @@
 """Integration tests: end-to-end happy path on the reference LAS test files."""
 
-import os
 from pathlib import Path
 
 import numpy as np
@@ -20,6 +19,7 @@ def test_load_strip_returns_ndarray(las_available: bool) -> None:
     if not las_available:
         pytest.skip("test LAS files not found")
     from lidar_strip_adjust import load_strip
+
     ref = load_strip(REF_LAS)
     assert ref.ndim == 2
     assert ref.shape[1] == 3
@@ -63,22 +63,35 @@ def test_end_to_end_adjustment_reduces_rmse(las_available: bool, tmp_path: Path)
         f"RMSE should improve: before={m_before['rmse']:.4f} after={m_after['rmse']:.4f}"
     )
     print(f"\nRMSE: {m_before['rmse']:.4f} → {m_after['rmse']:.4f} m")
-    print(f"Boresight: ω={np.degrees(result.params[0]):+.4f}° "
-          f"φ={np.degrees(result.params[1]):+.4f}° "
-          f"κ={np.degrees(result.params[2]):+.4f}°")
+    print(
+        f"Boresight: ω={np.degrees(result.params[0]):+.4f}° "
+        f"φ={np.degrees(result.params[1]):+.4f}° "
+        f"κ={np.degrees(result.params[2]):+.4f}°"
+    )
 
 
 def test_cli_runs(las_available: bool, tmp_path: Path) -> None:
     """CLI smoke test using subprocess."""
     if not las_available:
         pytest.skip("test LAS files not found")
-    import subprocess, sys
+    import subprocess
+    import sys
+
     result = subprocess.run(
-        [sys.executable, "-m", "lidar_strip_adjust.cli",
-         str(REF_LAS), str(TGT_LAS),
-         "-o", str(tmp_path / "out.las"),
-         "--max-patches", "3000"],
-        capture_output=True, text=True, timeout=120
+        [
+            sys.executable,
+            "-m",
+            "lidar_strip_adjust.cli",
+            str(REF_LAS),
+            str(TGT_LAS),
+            "-o",
+            str(tmp_path / "out.las"),
+            "--max-patches",
+            "3000",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=120,
     )
     assert result.returncode == 0, f"CLI failed:\n{result.stderr}"
     assert (tmp_path / "out.las").exists()

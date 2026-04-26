@@ -8,20 +8,21 @@ Each 'planar feature' is a local patch where:
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 import numpy as np
 from numpy.typing import NDArray
 from sklearn.neighbors import KDTree
-from dataclasses import dataclass, field
 
 
 @dataclass
 class PlanarPatch:
     """A planar feature extracted from a point cloud strip."""
 
-    centroid: NDArray[np.float64]       # (3,) XYZ of patch centre
-    normal: NDArray[np.float64]         # (3,) unit normal vector
-    planarity: float                     # eigenvalue-ratio planarity in [0, 1]
-    point_indices: NDArray[np.intp]     # indices of contributing points
+    centroid: NDArray[np.float64]  # (3,) XYZ of patch centre
+    normal: NDArray[np.float64]  # (3,) unit normal vector
+    planarity: float  # eigenvalue-ratio planarity in [0, 1]
+    point_indices: NDArray[np.intp]  # indices of contributing points
 
     def __post_init__(self) -> None:
         assert self.centroid.shape == (3,), "centroid must be (3,)"
@@ -62,11 +63,11 @@ def extract_planar_features(
         raise ValueError(f"Need at least {k} points, got {len(points)}")
 
     tree = KDTree(points, leaf_size=40)
-    dists, idxs = tree.query(points, k=k)  # type: ignore[arg-type]
+    dists, idxs = tree.query(points, k=k)
 
     patches: list[PlanarPatch] = []
 
-    for i, neighbours in enumerate(idxs):
+    for _i, neighbours in enumerate(idxs):
         patch = points[neighbours]
         centroid = patch.mean(axis=0)
         centred = patch - centroid

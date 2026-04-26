@@ -49,6 +49,10 @@ def save_strip(
 ) -> None:
     """Write corrected XYZ back into a new LAS file, preserving all other fields.
 
+    The header offsets are updated to the midpoint of the corrected coordinate
+    range so that the integer representation never overflows, regardless of how
+    much the boresight correction has shifted the points.
+
     Parameters
     ----------
     points:
@@ -59,6 +63,18 @@ def save_strip(
         Destination path for the adjusted LAS file.
     """
     las = laspy.read(template_path)
+
+    # Update offsets to midpoint of the corrected data range so the
+    # int32 representation always fits (scale * int32_range / 2 >> actual shift).
+    new_offsets = np.array(
+        [
+            (points[:, 0].min() + points[:, 0].max()) / 2.0,
+            (points[:, 1].min() + points[:, 1].max()) / 2.0,
+            (points[:, 2].min() + points[:, 2].max()) / 2.0,
+        ]
+    )
+    las.header.offsets = new_offsets
+
     las.x = points[:, 0]
     las.y = points[:, 1]
     las.z = points[:, 2]

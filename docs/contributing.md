@@ -60,4 +60,4 @@ Open a GitHub issue with:
 
 ## Security issues
 
-Do not open a public issue. See [SECURITY.md](SECURITY.md).
+Do not open a public issue. See [SECURITY.md](security.md).

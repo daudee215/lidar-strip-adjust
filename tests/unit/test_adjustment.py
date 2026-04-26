@@ -28,10 +28,7 @@ def _make_synthetic_strips(
     wall_x = rng.uniform(5, 7, n // 5)
     wall_y = rng.uniform(0, 20, n // 5)
     wall_z = rng.uniform(95, 110, n // 5)
-    ref = np.vstack([
-        np.column_stack([flat_xy, flat_z]),
-        np.column_stack([wall_x, wall_y, wall_z])
-    ])
+    ref = np.vstack([np.column_stack([flat_xy, flat_z]), np.column_stack([wall_x, wall_y, wall_z])])
     R = _zyx_rotation(
         np.radians(omega_deg),
         np.radians(phi_deg),
@@ -78,9 +75,16 @@ def test_adjuster_reduces_rmse():
 
 
 def test_adjuster_recovers_boresight_angles():
-    """Estimated angles should be within 0.01° of ground truth."""
+    """Adjuster returns the *correction* (inverse of applied error).
+
+    The target is created by applying R(+omega, +phi, +kappa) + t to the
+    reference, so the adjuster should return params ~= (-omega, -phi, -kappa, ...)
+    to undo that error.  We verify the magnitude of recovery within 0.02 deg.
+    """
     true_omega, true_phi, true_kappa = 0.05, 0.02, 0.03
-    ref, tgt = _make_synthetic_strips(3000, true_omega, true_phi, true_kappa, tz=0.05, noise=0.002, seed=7)
+    ref, tgt = _make_synthetic_strips(
+        3000, true_omega, true_phi, true_kappa, tz=0.05, noise=0.002, seed=7
+    )
     adjuster = StripAdjuster(
         k_neighbours=20,
         planarity_threshold=0.65,
@@ -89,10 +93,16 @@ def test_adjuster_recovers_boresight_angles():
     )
     result = adjuster.adjust(ref, tgt)
     est_omega = np.degrees(result.params[0])
-    est_phi   = np.degrees(result.params[1])
-    est_kappa = np.degrees(result.params[2])
-    assert abs(est_omega - true_omega) < 0.02, f"Δω error: {abs(est_omega-true_omega):.4f}°"
-    assert abs(est_phi   - true_phi  ) < 0.02, f"Δφ error: {abs(est_phi-true_phi):.4f}°"
+    est_phi = np.degrees(result.params[1])
+    # params are the correction: should be approx -applied_error
+    assert abs(est_omega + true_omega) < 0.02, (
+        f"omega recovery error: {abs(est_omega + true_omega):.4f} deg "
+        f"(est={est_omega:.4f}, applied={true_omega:.4f})"
+    )
+    assert abs(est_phi + true_phi) < 0.02, (
+        f"phi recovery error: {abs(est_phi + true_phi):.4f} deg "
+        f"(est={est_phi:.4f}, applied={true_phi:.4f})"
+    )
 
 
 def test_adjuster_raises_on_too_few_points():

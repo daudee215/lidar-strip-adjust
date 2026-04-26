@@ -1,7 +1,6 @@
 """Unit tests for strip RMSE metrics."""
 
 import numpy as np
-import pytest
 
 from lidar_strip_adjust.metrics import compute_strip_rmse
 

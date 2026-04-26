@@ -22,18 +22,41 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("reference", type=Path, help="Reference strip (.las/.laz)")
     p.add_argument("target", type=Path, help="Target strip to adjust (.las/.laz)")
-    p.add_argument("-o", "--output", type=Path, default=None,
-                   help="Output path for adjusted strip (default: <target>_adjusted.las)")
-    p.add_argument("--k", type=int, default=20, metavar="K",
-                   help="k-NN neighbourhood size for PCA (default: 20)")
-    p.add_argument("--planarity", type=float, default=0.7,
-                   help="Minimum planarity threshold [0,1] (default: 0.7)")
-    p.add_argument("--max-patches", type=int, default=50_000,
-                   help="Maximum patches per strip (default: 50000)")
-    p.add_argument("--max-dist", type=float, default=1.0,
-                   help="Maximum patch-centroid distance for matching (default: 1.0)")
-    p.add_argument("--max-angle", type=float, default=15.0,
-                   help="Maximum normal-angle for matching, degrees (default: 15)")
+    p.add_argument(
+        "-o",
+        "--output",
+        type=Path,
+        default=None,
+        help="Output path for adjusted strip (default: <target>_adjusted.las)",
+    )
+    p.add_argument(
+        "--k",
+        type=int,
+        default=20,
+        metavar="K",
+        help="k-NN neighbourhood size for PCA (default: 20)",
+    )
+    p.add_argument(
+        "--planarity",
+        type=float,
+        default=0.7,
+        help="Minimum planarity threshold [0,1] (default: 0.7)",
+    )
+    p.add_argument(
+        "--max-patches", type=int, default=50_000, help="Maximum patches per strip (default: 50000)"
+    )
+    p.add_argument(
+        "--max-dist",
+        type=float,
+        default=1.0,
+        help="Maximum patch-centroid distance for matching (default: 1.0)",
+    )
+    p.add_argument(
+        "--max-angle",
+        type=float,
+        default=15.0,
+        help="Maximum normal-angle for matching, degrees (default: 15)",
+    )
     p.add_argument("-v", "--verbose", action="store_true")
     return p
 
@@ -68,8 +91,10 @@ def main(argv: list[str] | None = None) -> int:
     print(f"  {len(target):,} points")
 
     metrics_before = compute_strip_rmse(reference, target)
-    print(f"\nOverlap RMSE before: {metrics_before['rmse']:.4f} m  "
-          f"(n={metrics_before['n_pairs']:,}, coverage={metrics_before['coverage_fraction']:.1%})")
+    print(
+        f"\nOverlap RMSE before: {metrics_before['rmse']:.4f} m  "
+        f"(n={metrics_before['n_pairs']:,}, coverage={metrics_before['coverage_fraction']:.1%})"
+    )
 
     adjuster = StripAdjuster(
         k_neighbours=args.k,
@@ -81,13 +106,13 @@ def main(argv: list[str] | None = None) -> int:
 
     result = adjuster.adjust(reference, target, strip_id=tgt_path.stem)
 
-    print(f"\nBoresight correction:")
-    print(f"  Δω={np.degrees(result.params[0]):+.4f}°  "
-          f"Δφ={np.degrees(result.params[1]):+.4f}°  "
-          f"Δκ={np.degrees(result.params[2]):+.4f}°")
-    print(f"  Δx={result.params[3]:+.4f}  "
-          f"Δy={result.params[4]:+.4f}  "
-          f"Δz={result.params[5]:+.4f}")
+    print("\nBoresight correction:")
+    print(
+        f"  Δω={np.degrees(result.params[0]):+.4f}°  "
+        f"Δφ={np.degrees(result.params[1]):+.4f}°  "
+        f"Δκ={np.degrees(result.params[2]):+.4f}°"
+    )
+    print(f"  Δx={result.params[3]:+.4f}  Δy={result.params[4]:+.4f}  Δz={result.params[5]:+.4f}")
     print(f"\nPoint-to-plane RMSE: {result.rmse_before:.4f} → {result.rmse_after:.4f} m")
     print(f"Correspondences: {result.n_correspondences}  Converged: {result.converged}")
 

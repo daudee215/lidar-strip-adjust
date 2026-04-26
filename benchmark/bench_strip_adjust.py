@@ -18,19 +18,19 @@ Or via pytest-benchmark:
 from __future__ import annotations
 
 import gc
+
+# Allow running standalone without installing
+import sys
 import time
 import tracemalloc
 from pathlib import Path
 
 import numpy as np
 
-# Allow running standalone without installing
-import sys
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from lidar_strip_adjust.adjustment import StripAdjuster
 from lidar_strip_adjust.metrics import compute_strip_rmse
-
 
 N_POINTS = 200_000  # ~100k per strip is minimum; use 200k for realism
 SEED = 99
@@ -45,11 +45,9 @@ def _generate_large_strips(n: int = N_POINTS, seed: int = SEED):
     wall_x = np.tile(np.linspace(50, 55, wall_n // 4), 4)[:wall_n]
     wall_y = rng.uniform(0, 200, wall_n)
     wall_z = rng.uniform(140, 165, wall_n)
-    ref = np.vstack([
-        np.column_stack([flat_xy, flat_z]),
-        np.column_stack([wall_x, wall_y, wall_z])
-    ])
+    ref = np.vstack([np.column_stack([flat_xy, flat_z]), np.column_stack([wall_x, wall_y, wall_z])])
     from lidar_strip_adjust.adjustment import _zyx_rotation
+
     R = _zyx_rotation(np.radians(0.04), np.radians(0.015), np.radians(0.025))
     t = np.array([0.0, 0.0, 0.08])
     tgt = (R @ ref.T).T + t + rng.normal(0, 0.008, ref.shape)
@@ -81,7 +79,7 @@ def run_benchmark() -> dict:
     tracemalloc.stop()
 
     m_before = compute_strip_rmse(ref, tgt, max_dist=0.5, subsample=50_000)
-    m_after  = compute_strip_rmse(ref, result.corrected_points, max_dist=0.5, subsample=50_000)
+    m_after = compute_strip_rmse(ref, result.corrected_points, max_dist=0.5, subsample=50_000)
 
     report = {
         "n_points_per_strip": N_POINTS,
@@ -96,7 +94,7 @@ def run_benchmark() -> dict:
         "peak_memory_mb": round(peak / 1024 / 1024, 1),
         "boresight_deg": {
             "omega": round(np.degrees(result.params[0]), 4),
-            "phi":   round(np.degrees(result.params[1]), 4),
+            "phi": round(np.degrees(result.params[1]), 4),
             "kappa": round(np.degrees(result.params[2]), 4),
         },
     }
