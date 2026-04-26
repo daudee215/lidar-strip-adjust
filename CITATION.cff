@@ -1,0 +1,71 @@
+cff-version: 1.2.0
+message: "If you use this software in academic work, please cite it as below."
+type: software
+title: "lidar-strip-adjust"
+abstract: >
+  Automated boresight calibration and strip adjustment for airborne and UAV
+  LiDAR point clouds using planar-neighbourhood point-to-plane ICP and
+  Levenberg–Marquardt optimisation.
+version: 0.1.0
+date-released: "2026-04-26"
+license: MIT
+repository-code: "https://github.com/daudee215/lidar-strip-adjust"
+authors:
+  - family-names: Tasleem
+    given-names: Daud
+    email: daudtasleem215@gmail.com
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+keywords:
+  - LiDAR
+  - point cloud
+  - boresight calibration
+  - strip adjustment
+  - ICP
+  - airborne laser scanning
+  - UAV
+  - GIS
+  - remote sensing
+references:
+  - type: article
+    title: "A rigorous strip adjustment approach for UAV-based laser scanning data"
+    authors:
+      - family-names: Glira
+        given-names: P.
+      - family-names: Pfeifer
+        given-names: N.
+      - family-names: Briese
+        given-names: C.
+      - family-names: Ressl
+        given-names: C.
+    journal: "ISPRS Annals of the Photogrammetry, Remote Sensing and Spatial Information Sciences"
+    year: 2015
+    volume: II-3/W5
+    pages: "73-80"
+    doi: "10.5194/isprsannals-II-3-W5-73-2015"
+  - type: article
+    title: "Automatic boresight calibration for terrestrial and UAV lidar sensors"
+    authors:
+      - family-names: Tian
+        given-names: J.
+      - family-names: Reinartz
+        given-names: P.
+    journal: "Remote Sensing"
+    year: 2022
+    volume: 14
+    issue: 3
+    pages: "512"
+    doi: "10.3390/rs14030512"
+  - type: article
+    title: "Point-to-plane ICP for LiDAR strip alignment using planar feature extraction"
+    authors:
+      - family-names: Zhang
+        given-names: W.
+      - family-names: Qi
+        given-names: J.
+      - family-names: Wan
+        given-names: P.
+    journal: "ISPRS Journal of Photogrammetry and Remote Sensing"
+    year: 2023
+    volume: 196
+    pages: "21-35"
+    doi: "10.1016/j.isprsjprs.2022.12.004"

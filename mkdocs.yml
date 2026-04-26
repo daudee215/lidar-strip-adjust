@@ -1,0 +1,55 @@
+site_name: lidar-strip-adjust
+site_description: Automated boresight calibration and strip adjustment for airborne/UAV LiDAR point clouds
+site_author: Daud Tasleem
+site_url: https://daudee215.github.io/lidar-strip-adjust/
+repo_name: daudee215/lidar-strip-adjust
+repo_url: https://github.com/daudee215/lidar-strip-adjust
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.sections
+    - toc.integrate
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - API Reference: api.md
+  - Architecture Decision: adr/0001-architecture.md
+  - Roadmap: roadmap.md
+  - Contributing: contributing.md
+  - Security: security.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/daudee215
+
+plugins:
+  - search
