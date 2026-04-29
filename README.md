@@ -13,7 +13,7 @@
 
 `lidar-strip-adjust` estimates and corrects the 6-DOF rigid misalignment (3 boresight
 angles + 3 lever-arm components) between overlapping LiDAR flight strips using
-planar-neighbourhood point-to-plane ICP minimised by Levenberg–Marquardt.
+planar-neighbourhood point-to-plane ICP minimised by Levenberg-Marquardt.
 
 Given two LAS/LAZ files for adjacent flight strips, it:
 1. Extracts planar features from each strip via PCA on k-NN patches.
@@ -29,14 +29,14 @@ Given two LAS/LAZ files for adjacent flight strips, it:
 ### The gap
 
 Airborne and UAV LiDAR surveys are captured in overlapping flight strips. Small
-boresight misalignments (< 0.1°) between the IMU and the scanner produce 5–15 cm
-step artefacts in the merged point cloud — visible on rooftops, roads, and flat
+boresight misalignments (< 0.1°) between the IMU and the scanner produce 5-15 cm
+step artefacts in the merged point cloud - visible on rooftops, roads, and flat
 terrain. Correcting this is a standard requirement in every production LiDAR workflow.
 
 **No maintained open-source Python library existed for this task before this project.**
 
 The only prior OSS attempt:
-- [`cdfbdex/StripAdjustment`](https://github.com/cdfbdex/StripAdjustment) — 4 ★,
+- [`cdfbdex/StripAdjustment`](https://github.com/cdfbdex/StripAdjustment) - 4 ★,
   last commit July 2022, CPD-only, no API, no tests, no CI.
 
 Academic methods are published (Zhang et al. 2023; Glira et al. 2015; Tian et al. 2022)
@@ -47,15 +47,15 @@ LP360, LiDAR360) solve this but are proprietary and cost thousands per seat.
 
 Automated planar-neighbourhood ICP boresight estimation with a typed Python API,
 full unit + integration test coverage, and benchmarked performance on real-scale
-datasets — all in a pip-installable package.
+datasets - all in a pip-installable package.
 
 ### Source signals
 
-- [`PDAL/PDAL#4830`](https://github.com/PDAL/PDAL/issues/4830) — PDAL users
+- [`PDAL/PDAL#4830`](https://github.com/PDAL/PDAL/issues/4830) - PDAL users
   requesting a strip adjustment filter; never implemented.
 - Zhang et al. (2023). *"Airborne LiDAR Strip Adjustment Method Based on Point
   Clouds with Planar Neighborhoods."* Remote Sensing 15(23):5447.
-  [DOI 10.3390/rs15235447](https://doi.org/10.3390/rs15235447) — no code released.
+  [DOI 10.3390/rs15235447](https://doi.org/10.3390/rs15235447) - no code released.
 - Glira et al. (2015). *"Rigorous Boresight Self-Calibration."* Remote Sensing
   11(4):442. [DOI 10.3390/rs11040442](https://doi.org/10.3390/rs11040442)
 - Stack Exchange GIS: multiple unanswered questions on flightline-based strip
@@ -141,7 +141,7 @@ python benchmark/bench_strip_adjust.py
   Dense forest with no ground penetration may yield insufficient features.
 - Corrects rigid boresight only; does not model IMU trajectory drift or GPS lever-arm
   errors (planned for v0.2).
-- Input files must be in LAS 1.0–1.4 format. E57 and other formats are not yet supported.
+- Input files must be in LAS 1.0-1.4 format. E57 and other formats are not yet supported.
 
 ---
 
@@ -163,4 +163,4 @@ If you use this tool in research, please cite:
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT - see [LICENSE](LICENSE).
