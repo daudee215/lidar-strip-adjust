@@ -70,7 +70,7 @@ def apply_correction(
     omega, phi, kappa = params[:3]
     translation = params[3:]
     R = _zyx_rotation(omega, phi, kappa)
-    return (R @ points.T).T + translation
+    return (R @ points.T).T + translation  # type: ignore[no-any-return]
 
 
 # ── Correspondence matching ─────────────────────────────────────────────────
