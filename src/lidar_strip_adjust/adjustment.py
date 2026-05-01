@@ -141,7 +141,10 @@ class AdjustmentResult:
     converged: bool
     n_iterations: int
     cost: float
-    corrected_points: NDArray[np.float64] = field(default_factory=lambda: np.empty((0, 3)), repr=False)  # noqa: E501
+    corrected_points: NDArray[np.float64] = field(
+        default_factory=lambda: np.empty((0, 3)),
+        repr=False,
+    )
 
 
 class StripAdjuster:
