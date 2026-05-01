@@ -70,7 +70,7 @@ def apply_correction(
     omega, phi, kappa = params[:3]
     translation = params[3:]
     R = _zyx_rotation(omega, phi, kappa)
-    return (R @ points.T).T + translation
+    return (R @ points.T).T + translation  # type: ignore[no-any-return]
 
 
 # ── Correspondence matching ─────────────────────────────────────────────────
@@ -141,7 +141,10 @@ class AdjustmentResult:
     converged: bool
     n_iterations: int
     cost: float
-    corrected_points: NDArray[np.float64] = field(default_factory=lambda: np.empty((0, 3)), repr=False)
+    corrected_points: NDArray[np.float64] = field(
+        default_factory=lambda: np.empty((0, 3)),
+        repr=False,
+    )
 
 
 class StripAdjuster:
