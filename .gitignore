@@ -89,3 +89,10 @@ benchmark/results/
 *.las
 *.laz
 !tests/data/*.las
+
+# Layout-audit outputs
+node_modules/
+audit-report.json
+screenshots/
+playwright-report/
+test-results/
