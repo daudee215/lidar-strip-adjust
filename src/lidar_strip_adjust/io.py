@@ -66,13 +66,8 @@ def save_strip(
 
     # Update offsets to midpoint of the corrected data range so the
     # int32 representation always fits (scale * int32_range / 2 >> actual shift).
-    new_offsets = np.array(
-        [
-            (points[:, 0].min() + points[:, 0].max()) / 2.0,
-            (points[:, 1].min() + points[:, 1].max()) / 2.0,
-            (points[:, 2].min() + points[:, 2].max()) / 2.0,
-        ]
-    )
+    xyz = points[:, :3]
+    new_offsets = (xyz.min(axis=0) + xyz.max(axis=0)) / 2.0
     las.header.offsets = new_offsets
 
     las.x = points[:, 0]

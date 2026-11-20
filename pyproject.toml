@@ -28,6 +28,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+lazrs = ["laspy[lazrs]>=2.5"]
 dev = [
     "pytest>=7.4",
     "pytest-benchmark>=4.0",

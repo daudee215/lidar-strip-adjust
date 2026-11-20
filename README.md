@@ -3,7 +3,6 @@
 **Automated boresight calibration and strip adjustment for airborne/UAV LiDAR point clouds.**
 
 [![CI](https://github.com/daudee215/lidar-strip-adjust/actions/workflows/ci.yml/badge.svg)](https://github.com/daudee215/lidar-strip-adjust/actions)
-[![PyPI](https://img.shields.io/pypi/v/lidar-strip-adjust)](https://pypi.org/project/lidar-strip-adjust/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org)
 
@@ -66,12 +65,14 @@ datasets - all in a pip-installable package.
 ## Install
 
 ```bash
-pip install lidar-strip-adjust
-# or with lazrs support for compressed LAZ files:
-pip install "lidar-strip-adjust[lazrs]"
+git clone https://github.com/daudee215/lidar-strip-adjust.git
+cd lidar-strip-adjust
+python -m pip install .
+lidar-strip-adjust --help
 ```
 
-Requires Python ≥ 3.10.
+Requires Python 3.10 or later. For compressed LAZ files, install from the same
+checkout with `python -m pip install ".[lazrs]"`.
 
 ---
 

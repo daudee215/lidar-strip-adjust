@@ -108,12 +108,12 @@ def main(argv: list[str] | None = None) -> int:
 
     print("\nBoresight correction:")
     print(
-        f"  Δω={np.degrees(result.params[0]):+.4f}°  "
-        f"Δφ={np.degrees(result.params[1]):+.4f}°  "
-        f"Δκ={np.degrees(result.params[2]):+.4f}°"
+        f"  omega={np.degrees(result.params[0]):+.4f} deg  "
+        f"phi={np.degrees(result.params[1]):+.4f} deg  "
+        f"kappa={np.degrees(result.params[2]):+.4f} deg"
     )
-    print(f"  Δx={result.params[3]:+.4f}  Δy={result.params[4]:+.4f}  Δz={result.params[5]:+.4f}")
-    print(f"\nPoint-to-plane RMSE: {result.rmse_before:.4f} → {result.rmse_after:.4f} m")
+    print(f"  dx={result.params[3]:+.4f}  dy={result.params[4]:+.4f}  dz={result.params[5]:+.4f}")
+    print(f"\nPoint-to-plane RMSE: {result.rmse_before:.4f} -> {result.rmse_after:.4f} m")
     print(f"Correspondences: {result.n_correspondences}  Converged: {result.converged}")
 
     if result.corrected_points is not None:
